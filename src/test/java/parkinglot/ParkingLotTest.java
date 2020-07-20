@@ -8,6 +8,7 @@ import parkinglot.model.Car;
 import parkinglot.observer.AirportSecurity;
 import parkinglot.observer.Owner;
 import parkinglot.service.ParkingLotSystem;
+import parkinglot.utility.MessageToInform;
 
 public class ParkingLotTest {
     ParkingLotSystem parkingLotSystem;
@@ -106,7 +107,7 @@ public class ParkingLotTest {
     @Test
     public void givenAVehicleToPark_ShouldInformOwnerParkingLotFull(){
         try {
-            parkingLotSystem.addOwner(owner, airportSecurity);
+            parkingLotSystem.addObserver(owner, airportSecurity);
             Car car = new Car(1, "Kaustavi", "WB-9056");
             Car car1 = new Car(2, "Sagnik", "WB-9045");
             Car car2 = new Car(3, "Riya", "WB-9023");
@@ -115,8 +116,28 @@ public class ParkingLotTest {
             parkingLotSystem.park(car1);
             parkingLotSystem.park(car2);
             parkingLotSystem.park(car3);
-            Assert.assertEquals("Parking lot is full", owner.getMessage());
-            Assert.assertEquals("Parking lot is full", airportSecurity.getMessage());
+            Assert.assertEquals(MessageToInform.FULL.message, owner.getMessage());
+            Assert.assertEquals(MessageToInform.FULL.message, airportSecurity.getMessage());
+        } catch(ParkingLotSystemException e){
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void whenSpaceInParkingLot_ShouldInformOwner(){
+        try {
+            parkingLotSystem.addObserver(owner, airportSecurity);
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            Car car1 = new Car(2, "Sagnik", "WB-9045");
+            Car car2 = new Car(3, "Riya", "WB-9023");
+            Car car3 = new Car(4, "Gowri", "WB-9011");
+            parkingLotSystem.park(car);
+            parkingLotSystem.park(car1);
+            parkingLotSystem.park(car2);
+            parkingLotSystem.park(car3);
+            Assert.assertEquals(MessageToInform.FULL.message, owner.getMessage());
+            Assert.assertEquals(MessageToInform.FULL.message, airportSecurity.getMessage());
+            parkingLotSystem.unPark(car);
+            Assert.assertEquals(MessageToInform.HAVE_SPACE.message, owner.getMessage());
         } catch(ParkingLotSystemException e){
             e.printStackTrace();
         }
