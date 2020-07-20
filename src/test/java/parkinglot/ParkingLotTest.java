@@ -35,7 +35,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenAVehicle_WhenUnParked_ShouldReturnTrue(){
+    public void givenAVehicle_WhenUnParked_ShouldReturnTrue() {
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             parkingLotSystem.parkingLotAttendant(car);
@@ -48,7 +48,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenAVehicle_WhenAlreadyParked_ShouldReturnFalse(){
+    public void givenAVehicle_WhenAlreadyParked_ShouldReturnFalse() {
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             parkingLotSystem.parkingLotAttendant(car);
@@ -59,7 +59,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenSameCar_CannotBeParked_ShouldThrowException(){
+    public void givenSameCar_CannotBeParked_ShouldThrowException() {
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             parkingLotSystem.parkingLotAttendant(car);
@@ -104,8 +104,9 @@ public class ParkingLotTest {
         boolean isUnPark = parkingLotSystem.isVehicleUnParked(car);
         Assert.assertFalse(isUnPark);
     }
+
     @Test
-    public void givenAVehicleToPark_ShouldInformOwnerParkingLotFull(){
+    public void givenAVehicleToPark_ShouldInformOwnerParkingLotFull() {
         try {
             parkingLotSystem.addObserver(owner, airportSecurity);
             Car car = new Car(1, "Kaustavi", "WB-9056");
@@ -118,12 +119,13 @@ public class ParkingLotTest {
             parkingLotSystem.parkingLotAttendant(car3);
             Assert.assertEquals(MessageToInform.FULL.message, owner.getMessage());
             Assert.assertEquals(MessageToInform.FULL.message, airportSecurity.getMessage());
-        } catch(ParkingLotSystemException e){
+        } catch (ParkingLotSystemException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void whenSpaceInParkingLot_ShouldInformOwner(){
+    public void whenSpaceInParkingLot_ShouldInformOwner() {
         try {
             parkingLotSystem.addObserver(owner, airportSecurity);
             Car car = new Car(1, "Kaustavi", "WB-9056");
@@ -138,10 +140,11 @@ public class ParkingLotTest {
             Assert.assertEquals(MessageToInform.FULL.message, airportSecurity.getMessage());
             parkingLotSystem.unPark(car);
             Assert.assertEquals(MessageToInform.HAVE_SPACE.message, owner.getMessage());
-        } catch(ParkingLotSystemException e){
+        } catch (ParkingLotSystemException e) {
             e.printStackTrace();
         }
     }
+
     @Test
     public void givenACar_ParkedInAParticularSlot_ShouldReturnTrue() throws ParkingLotSystemException {
         Car car = new Car(1, "Kaustavi", "WB-9056");
@@ -162,8 +165,9 @@ public class ParkingLotTest {
         parkingLotSystem.unPark(car1);
         parkingLotSystem.parkingLotAttendant(car3);
         int slot = parkingLotSystem.checkCarSlot(car3);
-        Assert.assertEquals(1,slot);
+        Assert.assertEquals(1, slot);
     }
+
     @Test
     public void givenCarParked_ThenUnParkFirstCar_AgainTwoCarParked_ThirdCarSlot_ShouldbeMatched() throws ParkingLotSystemException {
         Car car = new Car(1, "Kaustavi", "WB-9056");
@@ -176,6 +180,26 @@ public class ParkingLotTest {
         parkingLotSystem.parkingLotAttendant(car2);
         parkingLotSystem.parkingLotAttendant(car3);
         int slot = parkingLotSystem.checkCarSlot(car3);
-        Assert.assertEquals(2,slot);
+        Assert.assertEquals(2, slot);
+    }
+
+    @Test
+    public void WhenCarFound_ShouldReturnTrue() throws ParkingLotSystemException {
+        Car car = new Car(1, "Kaustavi", "WB-9056");
+        parkingLotSystem.parkingLotAttendant(car);
+        int slot = parkingLotSystem.findCar(car);
+        Assert.assertEquals(0, slot);
+    }
+
+    @Test
+    public void WhenCarNotFound_ShouldThrowException() throws ParkingLotSystemException {
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            Car car1 = new Car(2, "Sagnik", "WB-9045");
+            parkingLotSystem.parkingLotAttendant(car);
+            int slot = parkingLotSystem.findCar(car1);
+        } catch (ParkingLotSystemException e) {
+            Assert.assertEquals(ParkingLotSystemException.ExceptionType.NOT_FOUND, e.exceptionType);
+        }
     }
 }

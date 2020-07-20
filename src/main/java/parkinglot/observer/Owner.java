@@ -1,6 +1,6 @@
 package parkinglot.observer;
 
-public class Owner implements IObserver{
+public class Owner implements IObserver {
     private String message = null;
 
     public String getMessage() {

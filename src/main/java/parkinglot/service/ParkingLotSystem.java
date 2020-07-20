@@ -12,8 +12,8 @@ import java.util.Map;
 public class ParkingLotSystem implements IParkingLotSystem {
     private final int PARKING_LOT_SIZE = 3;
     Owner owner = new Owner();
-    int currentAvailableSlot = 0;
     AirportSecurity airportSecurity = new AirportSecurity();
+    int currentAvailableSlot = 0;
 
     private Map<Integer, Car> parkingLotMap = new HashMap<Integer, Car>();
     private Map<Integer, Integer> parkingSlotMap = new HashMap<Integer, Integer>();
@@ -74,11 +74,19 @@ public class ParkingLotSystem implements IParkingLotSystem {
         park(car, currentAvailableSlot);
         currentAvailableSlot++;
     }
-    public int checkCarSlot(Car car){
+
+    public int checkCarSlot(Car car) {
         return parkingCarMap.get(car.getId());
     }
+
     public boolean isCarAddedToSlot(Car car) {
         return parkingCarMap.containsKey(car.getId());
+    }
+
+    public int findCar(Car car) throws ParkingLotSystemException {
+        if (parkingCarMap.containsKey(car.getId()))
+            return parkingCarMap.get(car.getId());
+        throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
     }
 }
 

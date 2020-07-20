@@ -1,6 +1,6 @@
 package parkinglot.utility;
 
-public enum  MessageToInform {
+public enum MessageToInform {
     FULL("Parking lot is full"),
     HAVE_SPACE("Again space in parkingLot to park car");
 
