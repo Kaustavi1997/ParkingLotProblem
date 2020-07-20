@@ -1,40 +1,48 @@
 package parkinglot.service;
 
 import parkinglot.exception.ParkingLotSystemException;
+import parkinglot.model.Car;
+import parkinglot.observer.Owner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParkingLotSystem implements IParkingLotSystem {
-    public Object vehicle;
+    private final int PARKING_LOT_SIZE = 3;
+    Owner owner = new Owner();
 
-    public ParkingLotSystem() {
+    private Map<Integer, Car> parkingLotMap = new HashMap<Integer, Car>();
+
+    public void park(Car car) throws ParkingLotSystemException {
+        if(parkingLotMap.containsKey(car.getId())){
+            throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.ALREADY_EXISTS);}
+        else if(parkingLotMap.size() < PARKING_LOT_SIZE){
+            parkingLotMap.put(car.getId(), car);}
+        if(parkingLotMap.size() == PARKING_LOT_SIZE){
+            notifyOwner();
+            throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NO_SPACE);}
+    }
+    public boolean isVehicleParked(Car car) {
+        return parkingLotMap.containsKey(car.getId());
     }
 
-    public void park(Object vehicle) throws ParkingLotSystemException {
-        if (this.vehicle != null)
-            throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NO_SPACE);
-        this.vehicle = vehicle;
-    }
-
-    @Override
-    public boolean isVehicleParked(Object vehicle) {
-        if (this.vehicle.equals(vehicle))
-            return true;
-        return false;
-    }
-
-    public void unPark(Object vehicle) throws ParkingLotSystemException {
-        if (vehicle == null)
+    public void unPark(Car car) throws ParkingLotSystemException {
+        if(car == null)
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NULL_VALUE);
-        if (this.vehicle.equals(vehicle))
-            this.vehicle = null;
-        else
+        if(!parkingLotMap.containsKey(car.getId()))
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
+        parkingLotMap.remove(car.getId());
     }
 
-    @Override
-    public boolean isVehicleUnParked(Object vehicle) {
-        if (this.vehicle == null)
-            return true;
-        return false;
+    public boolean isVehicleUnParked(Car car) {
+        return (!parkingLotMap.containsKey(car.getId()));
+    }
+
+    public void addOwner(Owner owner) {
+        this.owner = owner;
+    }
+    public void notifyOwner() {
+        owner.setMessage("Parking lot is full");
     }
 }
 
