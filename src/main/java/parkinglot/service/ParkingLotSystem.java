@@ -84,7 +84,7 @@ public class ParkingLotSystem implements IParkingLotSystem {
     }
 
     public int findCar(Car car) throws ParkingLotSystemException {
-        if (parkingCarMap.containsKey(car.getId()))
+        if (isCarAddedToSlot(car))
             return parkingCarMap.get(car.getId());
         throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
     }
