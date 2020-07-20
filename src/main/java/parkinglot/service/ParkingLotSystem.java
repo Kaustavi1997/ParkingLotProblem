@@ -2,6 +2,8 @@ package parkinglot.service;
 
 import parkinglot.exception.ParkingLotSystemException;
 import parkinglot.model.Car;
+import parkinglot.observer.AirportSecurity;
+import parkinglot.observer.IObserver;
 import parkinglot.observer.Owner;
 
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Map;
 public class ParkingLotSystem implements IParkingLotSystem {
     private final int PARKING_LOT_SIZE = 3;
     Owner owner = new Owner();
+    AirportSecurity airportSecurity = new AirportSecurity();
 
     private Map<Integer, Car> parkingLotMap = new HashMap<Integer, Car>();
 
@@ -19,7 +22,7 @@ public class ParkingLotSystem implements IParkingLotSystem {
         else if(parkingLotMap.size() < PARKING_LOT_SIZE){
             parkingLotMap.put(car.getId(), car);}
         if(parkingLotMap.size() == PARKING_LOT_SIZE){
-            notifyOwner();
+            notifyObserver();
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NO_SPACE);}
     }
     public boolean isVehicleParked(Car car) {
@@ -38,11 +41,13 @@ public class ParkingLotSystem implements IParkingLotSystem {
         return (!parkingLotMap.containsKey(car.getId()));
     }
 
-    public void addOwner(Owner owner) {
+    public void addOwner(Owner owner, AirportSecurity airportSecurity) {
         this.owner = owner;
+        this.airportSecurity = airportSecurity;
     }
-    public void notifyOwner() {
+    public void notifyObserver() {
         owner.setMessage("Parking lot is full");
+        airportSecurity.setMessage("Parking lot is full");
     }
 }
 

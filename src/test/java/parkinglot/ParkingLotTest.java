@@ -5,17 +5,20 @@ import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotSystemException;
 import parkinglot.model.Car;
+import parkinglot.observer.AirportSecurity;
 import parkinglot.observer.Owner;
 import parkinglot.service.ParkingLotSystem;
 
 public class ParkingLotTest {
     ParkingLotSystem parkingLotSystem;
     Owner owner;
+    AirportSecurity airportSecurity;
 
     @Before
     public void setUp() throws Exception {
         parkingLotSystem = new ParkingLotSystem();
         owner = new Owner();
+        airportSecurity = new AirportSecurity();
     }
 
     @Test
@@ -101,9 +104,9 @@ public class ParkingLotTest {
         Assert.assertFalse(isUnPark);
     }
     @Test
-    public void givenAVehicleToPark_ShouldInformOwnerParkingLotFull() throws ParkingLotSystemException {
+    public void givenAVehicleToPark_ShouldInformOwnerParkingLotFull(){
         try {
-            parkingLotSystem.addOwner(owner);
+            parkingLotSystem.addOwner(owner, airportSecurity);
             Car car = new Car(1, "Kaustavi", "WB-9056");
             Car car1 = new Car(2, "Sagnik", "WB-9045");
             Car car2 = new Car(3, "Riya", "WB-9023");
@@ -113,6 +116,7 @@ public class ParkingLotTest {
             parkingLotSystem.park(car2);
             parkingLotSystem.park(car3);
             Assert.assertEquals("Parking lot is full", owner.getMessage());
+            Assert.assertEquals("Parking lot is full", airportSecurity.getMessage());
         } catch(ParkingLotSystemException e){
             e.printStackTrace();
         }
