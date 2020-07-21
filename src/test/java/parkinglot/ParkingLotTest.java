@@ -16,7 +16,7 @@ public class ParkingLotTest {
     AirportSecurity airportSecurity;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         parkingLotSystem = new ParkingLotSystem();
         owner = new Owner();
         airportSecurity = new AirportSecurity();
@@ -70,7 +70,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void notGivenAVehicle_WhenUnParked_ShouldThrowException() throws ParkingLotSystemException {
+    public void notGivenAVehicle_WhenUnParked_ShouldThrowException() {
         try {
             parkingLotSystem.unPark(null);
         } catch (ParkingLotSystemException e) {
@@ -79,7 +79,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenAVehicle_NotPresent_ShouldThrowException() throws ParkingLotSystemException {
+    public void givenAVehicle_NotPresent_ShouldThrowException() {
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             parkingLotSystem.parkingLotAttendant(car);
