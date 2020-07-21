@@ -1,5 +1,6 @@
 package parkinglot.service;
-
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import parkinglot.exception.ParkingLotSystemException;
 import parkinglot.model.Car;
 import parkinglot.observer.AirportSecurity;
@@ -15,9 +16,10 @@ public class ParkingLotSystem implements IParkingLotSystem {
     AirportSecurity airportSecurity = new AirportSecurity();
     int currentAvailableSlot = 0;
 
-    private Map<Integer, Car> parkingLotMap = new HashMap<Integer, Car>();
+    private Map<Integer, Car> parkingLotMap = new HashMap<>();
     private Map<Integer, Integer> parkingSlotMap = new HashMap<>();
     private Map<Integer, Integer> parkingCarMap = new HashMap<>();
+    private Map<Car, String> parkingTimeMap = new HashMap<>();
 
     public void park(Car car, int slot) throws ParkingLotSystemException {
         if (parkingLotMap.size() == PARKING_LOT_SIZE) {
@@ -28,6 +30,8 @@ public class ParkingLotSystem implements IParkingLotSystem {
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.ALREADY_EXISTS);
         } else if (parkingLotMap.size() < PARKING_LOT_SIZE) {
             parkingLotMap.put(car.getId(), car);
+            storeParkingTime(car);
+            notifyOwnerParkingTime(car);
             parkingSlotMap.put(currentAvailableSlot, car.getId());
             parkingCarMap.put(car.getId(), currentAvailableSlot);
         }
@@ -69,6 +73,10 @@ public class ParkingLotSystem implements IParkingLotSystem {
         owner.setMessage(MessageToInform.HAVE_SPACE.message);
     }
 
+    public void notifyOwnerParkingTime(Car car) {
+        owner.setMessage(MessageToInform.PARK_TIME.message + parkingTimeMap.get(car));
+    }
+
     public void parkingLotAttendant(Car car) throws ParkingLotSystemException {
         while (parkingSlotMap.containsKey(currentAvailableSlot))
             currentAvailableSlot++;
@@ -89,5 +97,19 @@ public class ParkingLotSystem implements IParkingLotSystem {
             return parkingCarMap.get(car.getId());
         throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
     }
+
+    public void storeParkingTime(Car car){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        parkingTimeMap.put(car, dtf.format(now));
+    }
+
+    public boolean isTimeStored(Car car){
+        return parkingTimeMap.containsKey(car);
+    }
+    public String getTime(Car car){
+        return parkingTimeMap.get(car);
+    }
+
 }
 

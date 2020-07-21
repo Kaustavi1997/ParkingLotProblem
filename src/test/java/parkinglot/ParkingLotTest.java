@@ -220,4 +220,29 @@ public class ParkingLotTest {
             Assert.assertEquals(ParkingLotSystemException.ExceptionType.NOT_FOUND, e.exceptionType);
         }
     }
+
+    @Test
+    public void whenTimeStored_ReturnedTrue() {
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            boolean dateTime = parkingLotSystem.isTimeStored(car);
+            Assert.assertTrue(dateTime);
+        }catch (ParkingLotSystemException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void whenTimeStored_NotifyOwner_ShouldReturnTrue() {
+        try {
+            parkingLotSystem.addObserver(owner, airportSecurity);
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            Assert.assertEquals(MessageToInform.PARK_TIME.message + parkingLotSystem.getTime(car), owner.getMessage());
+        }catch (ParkingLotSystemException e){
+            e.printStackTrace();
+        }
+    }
+
 }
