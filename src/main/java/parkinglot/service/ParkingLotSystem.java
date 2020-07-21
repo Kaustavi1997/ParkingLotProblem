@@ -16,8 +16,8 @@ public class ParkingLotSystem implements IParkingLotSystem {
     int currentAvailableSlot = 0;
 
     private Map<Integer, Car> parkingLotMap = new HashMap<Integer, Car>();
-    private Map<Integer, Integer> parkingSlotMap = new HashMap<Integer, Integer>();
-    private Map<Integer, Integer> parkingCarMap = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> parkingSlotMap = new HashMap<>();
+    private Map<Integer, Integer> parkingCarMap = new HashMap<>();
 
     public void park(Car car, int slot) throws ParkingLotSystemException {
         if (parkingLotMap.size() == PARKING_LOT_SIZE) {
@@ -44,7 +44,8 @@ public class ParkingLotSystem implements IParkingLotSystem {
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
         parkingLotMap.remove(car.getId());
         int slot = parkingCarMap.get(car.getId());
-        currentAvailableSlot = slot;
+        if(slot < currentAvailableSlot)
+            currentAvailableSlot = slot;
         parkingCarMap.remove(car.getId());
         parkingSlotMap.remove(currentAvailableSlot);
         notifyOwnerWhenSpace();
