@@ -16,7 +16,7 @@ public class ParkingLotTest {
     AirportSecurity airportSecurity;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         parkingLotSystem = new ParkingLotSystem();
         owner = new Owner();
         airportSecurity = new AirportSecurity();
@@ -70,7 +70,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void notGivenAVehicle_WhenUnParked_ShouldThrowException() throws ParkingLotSystemException {
+    public void notGivenAVehicle_WhenUnParked_ShouldThrowException(){
         try {
             parkingLotSystem.unPark(null);
         } catch (ParkingLotSystemException e) {
@@ -79,7 +79,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenAVehicle_NotPresent_ShouldThrowException() throws ParkingLotSystemException {
+    public void givenAVehicle_NotPresent_ShouldThrowException(){
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             parkingLotSystem.parkingLotAttendant(car);
@@ -90,19 +90,25 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenAVehicleParked_ButAskingIsVehicleParkedWithOtherObject_ShouldReturnFalse() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        parkingLotSystem.parkingLotAttendant(car);
-        boolean isParked = parkingLotSystem.isVehicleParked(new Car(2, "Sagnik", "WB-9066"));
-        Assert.assertFalse(isParked);
+    public void givenAVehicleParked_ButAskingIsVehicleParkedWithOtherObject_ShouldReturnFalse(){
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            boolean isParked = parkingLotSystem.isVehicleParked(new Car(2, "Sagnik", "WB-9066"));
+            Assert.assertFalse(isParked);
+        }catch(ParkingLotSystemException e){
+        }
     }
 
     @Test
-    public void givenAVehicle_NotUnParked_ButAskingForIsVehicleUnParked_ShouldReturnFalse() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        parkingLotSystem.parkingLotAttendant(car);
-        boolean isUnPark = parkingLotSystem.isVehicleUnParked(car);
-        Assert.assertFalse(isUnPark);
+    public void givenAVehicle_NotUnParked_ButAskingForIsVehicleUnParked_ShouldReturnFalse(){
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            boolean isUnPark = parkingLotSystem.isVehicleUnParked(car);
+            Assert.assertFalse(isUnPark);
+        } catch(ParkingLotSystemException e){
+        }
     }
 
     @Test
@@ -146,53 +152,65 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenACar_ParkedInAParticularSlot_ShouldReturnTrue() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        parkingLotSystem.parkingLotAttendant(car);
-        boolean addedToSlot = parkingLotSystem.isCarAddedToSlot(car);
-        Assert.assertTrue(addedToSlot);
+    public void givenACar_ParkedInAParticularSlot_ShouldReturnTrue(){
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            boolean addedToSlot = parkingLotSystem.isCarAddedToSlot(car);
+            Assert.assertTrue(addedToSlot);
+        }catch (ParkingLotSystemException e){
+        }
     }
 
     @Test
-    public void whenACarUnParked_ACarParked_ShouldMatchWithThePeviousSlot() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        Car car1 = new Car(2, "Sagnik", "WB-9045");
-        Car car2 = new Car(3, "Riya", "WB-9023");
-        Car car3 = new Car(4, "Gowri", "WB-9011");
-        parkingLotSystem.parkingLotAttendant(car);
-        parkingLotSystem.parkingLotAttendant(car1);
-        parkingLotSystem.parkingLotAttendant(car2);
-        parkingLotSystem.unPark(car1);
-        parkingLotSystem.parkingLotAttendant(car3);
-        int slot = parkingLotSystem.checkCarSlot(car3);
-        Assert.assertEquals(1, slot);
+    public void givenACarUnParked_ThenACarParked_BothTheSlotShouldBeSame() {
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            Car car1 = new Car(2, "Sagnik", "WB-9045");
+            Car car2 = new Car(3, "Riya", "WB-9023");
+            Car car3 = new Car(4, "Gowri", "WB-9011");
+            parkingLotSystem.parkingLotAttendant(car);
+            parkingLotSystem.parkingLotAttendant(car1);
+            parkingLotSystem.parkingLotAttendant(car2);
+            parkingLotSystem.unPark(car1);
+            parkingLotSystem.parkingLotAttendant(car3);
+            int slot = parkingLotSystem.checkCarSlot(car3);
+            Assert.assertEquals(1, slot);
+        }catch (ParkingLotSystemException e){
+        }
     }
 
     @Test
-    public void givenCarParked_ThenUnParkFirstCar_AgainTwoCarParked_ThirdCarSlot_ShouldbeMatched() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        Car car1 = new Car(2, "Sagnik", "WB-9045");
-        Car car2 = new Car(3, "Riya", "WB-9023");
-        Car car3 = new Car(4, "Gowri", "WB-9011");
-        parkingLotSystem.parkingLotAttendant(car);
-        parkingLotSystem.parkingLotAttendant(car1);
-        parkingLotSystem.unPark(car);
-        parkingLotSystem.parkingLotAttendant(car2);
-        parkingLotSystem.parkingLotAttendant(car3);
-        int slot = parkingLotSystem.checkCarSlot(car3);
-        Assert.assertEquals(2, slot);
+    public void givenCarsParked_ThenUnParkFirstCar_AgainTwoCarParked_ThirdCarSlot_ShouldBeMatched(){
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            Car car1 = new Car(2, "Sagnik", "WB-9045");
+            Car car2 = new Car(3, "Riya", "WB-9023");
+            Car car3 = new Car(4, "Gowri", "WB-9011");
+            parkingLotSystem.parkingLotAttendant(car);
+            parkingLotSystem.parkingLotAttendant(car1);
+            parkingLotSystem.unPark(car);
+            parkingLotSystem.parkingLotAttendant(car2);
+            parkingLotSystem.parkingLotAttendant(car3);
+            int slot = parkingLotSystem.checkCarSlot(car3);
+            Assert.assertEquals(2, slot);
+        }catch(ParkingLotSystemException e){
+        }
     }
 
     @Test
-    public void WhenCarFound_ShouldReturnTrue() throws ParkingLotSystemException {
-        Car car = new Car(1, "Kaustavi", "WB-9056");
-        parkingLotSystem.parkingLotAttendant(car);
-        int slot = parkingLotSystem.findCar(car);
-        Assert.assertEquals(0, slot);
+    public void WhenCarFound_ShouldReturnTrue(){
+        try {
+            Car car = new Car(1, "Kaustavi", "WB-9056");
+            parkingLotSystem.parkingLotAttendant(car);
+            int slot = parkingLotSystem.findCar(car);
+            Assert.assertEquals(0, slot);
+        }catch(ParkingLotSystemException e){
+        }
     }
 
     @Test
-    public void WhenCarNotFound_ShouldThrowException() throws ParkingLotSystemException {
+    public void WhenCarNotFound_ShouldThrowException(){
         try {
             Car car = new Car(1, "Kaustavi", "WB-9056");
             Car car1 = new Car(2, "Sagnik", "WB-9045");
