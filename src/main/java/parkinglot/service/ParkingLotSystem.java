@@ -1,6 +1,8 @@
 package parkinglot.service;
+
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+
 import parkinglot.exception.ParkingLotSystemException;
 import parkinglot.model.Car;
 import parkinglot.observer.AirportSecurity;
@@ -17,7 +19,6 @@ public class ParkingLotSystem implements IParkingLotSystem {
     int currentAvailableSlot = 0;
 
     private Map<Integer, Car> parkingLotMap = new HashMap<>();
-    private Map<Integer, Integer> parkingSlotMap = new HashMap<>();
     private Map<Integer, Integer> parkingCarMap = new HashMap<>();
     private Map<Car, String> parkingTimeMap = new HashMap<>();
 
@@ -32,7 +33,6 @@ public class ParkingLotSystem implements IParkingLotSystem {
             parkingLotMap.put(car.getId(), car);
             storeParkingTime(car);
             notifyOwnerParkingTime(car);
-            parkingSlotMap.put(currentAvailableSlot, car.getId());
             parkingCarMap.put(car.getId(), currentAvailableSlot);
         }
     }
@@ -48,10 +48,9 @@ public class ParkingLotSystem implements IParkingLotSystem {
             throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
         parkingLotMap.remove(car.getId());
         int slot = parkingCarMap.get(car.getId());
-        if(slot < currentAvailableSlot)
+        if (slot < currentAvailableSlot)
             currentAvailableSlot = slot;
         parkingCarMap.remove(car.getId());
-        parkingSlotMap.remove(currentAvailableSlot);
         notifyOwnerWhenSpace();
     }
 
@@ -77,8 +76,18 @@ public class ParkingLotSystem implements IParkingLotSystem {
         owner.setMessage(MessageToInform.PARK_TIME.message + parkingTimeMap.get(car));
     }
 
-    public void parkingLotAttendant(Car car) throws ParkingLotSystemException {
-        while (parkingSlotMap.containsKey(currentAvailableSlot))
+    public boolean isSlotNotAvailable() {
+        int slot = 0;
+        for (Map.Entry<Integer, Integer> entry : parkingCarMap.entrySet()) {
+            slot = entry.getValue();
+            if (slot == currentAvailableSlot)
+                return true;
+        }
+        return false;
+    }
+
+    public void allotParkingSlot(Car car) throws ParkingLotSystemException {
+        while (isSlotNotAvailable())
             currentAvailableSlot++;
         park(car, currentAvailableSlot);
         currentAvailableSlot++;
@@ -98,16 +107,17 @@ public class ParkingLotSystem implements IParkingLotSystem {
         throw new ParkingLotSystemException(ParkingLotSystemException.ExceptionType.NOT_FOUND);
     }
 
-    public void storeParkingTime(Car car){
+    public void storeParkingTime(Car car) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         parkingTimeMap.put(car, dtf.format(now));
     }
 
-    public boolean isTimeStored(Car car){
+    public boolean isTimeStored(Car car) {
         return parkingTimeMap.containsKey(car);
     }
-    public String getTime(Car car){
+
+    public String getTime(Car car) {
         return parkingTimeMap.get(car);
     }
 
